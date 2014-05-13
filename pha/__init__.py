@@ -1,5 +1,6 @@
 from matchers import (
-    linear_match as html_match
+    linear_match as html_match,
+    prune_unmatched_elements
 )
 
 from spec import (

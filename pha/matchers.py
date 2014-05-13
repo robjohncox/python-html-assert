@@ -7,6 +7,7 @@ def linear_match(spec, content):
 
     root_element = BeautifulSoup(content)
     all_element_definitions = _flatten_element_definitions(spec)
+    prune_unmatched_elements(root_element, all_element_definitions)
 
     element_def_index = 0
     for element in [desc for desc in root_element.descendants if type(desc) is Tag]:
@@ -19,6 +20,47 @@ def linear_match(spec, content):
                 return True
 
     return False
+
+
+def _flatten_element_definitions(spec):
+    """ Flattens the spec from a tree to a list using a depth first search. """
+
+    all_element_definitions = []
+    _flatten_element_definitions_rec(spec, all_element_definitions)
+    return all_element_definitions
+
+
+def _flatten_element_definitions_rec(current_element_def, all_element_definitions):
+    all_element_definitions.append(current_element_def)
+    for child in current_element_def.children:
+        _flatten_element_definitions_rec(child, all_element_definitions)
+
+
+def prune_unmatched_elements(element, all_element_definitions):
+    """ Removes elements in the tree which don't match any def or carry children who match any def """
+
+    i_match_anything = any(_matches(elem_def, element) for elem_def in all_element_definitions)
+
+    # Now I find out whether the children match anything
+    children_to_extract = []
+    child_matched_anything = False
+    for child_element in [child for child in element.children if type(child) is Tag]:
+        if prune_unmatched_elements(child_element, all_element_definitions):
+            child_matched_anything = True
+        else:
+            children_to_extract.append(child_element)
+    for child_element in children_to_extract:
+        child_element.extract()
+
+    # Let the client know if anything matched
+    return i_match_anything or child_matched_anything
+
+
+def _matches(element_def, element):
+    """ Tests whether an element matches an element definition. """
+    return _name_matches(element_def, element)\
+        and _content_matches(element_def, element)\
+        and _attributes_match(element_def, element)
 
 
 def _name_matches(element_def, element):
@@ -47,20 +89,6 @@ def _attributes_match(element_def, element):
         if key not in element.attrs or value not in element.attrs[key]:
             return False
     return True
-
-
-def _flatten_element_definitions(spec):
-    """ Flattens the spec from a tree to a list using a depth first search. """
-
-    all_element_definitions = []
-    _flatten_element_definitions_rec(spec, all_element_definitions)
-    return all_element_definitions
-
-
-def _flatten_element_definitions_rec(current_element_def, all_element_definitions):
-    all_element_definitions.append(current_element_def)
-    for child in current_element_def.children:
-        _flatten_element_definitions_rec(child, all_element_definitions)
 
 
 # def recursive_match(self, element):

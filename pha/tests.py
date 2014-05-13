@@ -1,6 +1,6 @@
 import unittest
 
-from pha import elem, html_match, html, heading, text, a, accordion, acc_group, acc_body, acc_heading, div
+from pha import elem, html_match, html, heading, text, a, accordion, acc_group, acc_body, acc_heading, div, pretty_spec, pretty_html
 
 
 class UnitTests(unittest.TestCase):
@@ -78,7 +78,7 @@ class UnitTests(unittest.TestCase):
         html_src = """
                     <html>
                         <body>
-                            <div class="accordion">>
+                            <div class="accordion">
                                 <div class="accordion-group">
                                     <div class="accordion-heading">
                                         <p>Rick</p>
@@ -670,6 +670,8 @@ class UnitTests(unittest.TestCase):
         self.assert_match(html_src, spec)
 
     def assert_match(self, html_src, spec):
+        print(pretty_html(html_src))
+        print(pretty_spec(spec))
         self.assertTrue(html_match(spec, html_src))
 
     def assert_not_match(self, html_src, spec):

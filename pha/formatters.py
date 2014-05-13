@@ -1,13 +1,21 @@
 from bs4 import BeautifulSoup
 
+from pha import prune_unmatched_elements
+
 
 def pretty_html(html_src):
     parsed_html = BeautifulSoup(html_src)
     return parsed_html.prettify()
 
 
-_TOKEN_ANY = 'XXXANY'
-_TOKEN_OR = 'XXXOR'
+def pretty_minimal_html(html_src, spec):
+    parsed_html = BeautifulSoup(html_src)
+    prune_unmatched_elements(parsed_html)
+    return parsed_html.prettify()
+
+
+_TOKEN_ANY = 'xxxany'
+_TOKEN_OR = 'xxxor'
 
 _PRE_PARSE_REPLACEMENTS = {
     '(': '',
@@ -27,7 +35,7 @@ _POST_PARSE_REPLACEMENTS = {
 def pretty_spec(spec):
     pretty_spec_html = BeautifulSoup(_build_spec_html(spec)).prettify()
     for before, after in _POST_PARSE_REPLACEMENTS.items():
-        pretty_spec_html.replace(before, after)
+        pretty_spec_html = pretty_spec_html.replace(before, after)
     return pretty_spec_html
 
 
