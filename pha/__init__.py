@@ -18,5 +18,6 @@ from spec import (
 
 from formatters import (
     pretty_html,
+    pretty_minimal_html,
     pretty_spec
 )
