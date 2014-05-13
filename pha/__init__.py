@@ -1,6 +1,9 @@
+import logging
 import re
 from bs4 import BeautifulSoup
 from bs4.element import Tag
+
+log = logging.getLogger('pha')
 
 
 # TODO Separate out bootstrap specific helpers into a plugin module
@@ -24,11 +27,17 @@ class ElementMatcher(object):
             attr_value = None
         return attr_value
 
+    # TODO This should return a proper results object that
+    #  - Wraps up the match/not match result
+    #  - Contains information required to debug the matching process
+    #  - Allows the client to easily print information to help with debugging failures
+
     def matches(self, element):
         if self._name_matches(element)\
                 and self._content_matches(element)\
                 and self._attributes_match(element)\
                 and self._children_match(element):
+            log.info('Match found: {0} on element {1}'.format(str(self), element.name))
             return True
         return self._search_children_for_match(element)
 
@@ -38,7 +47,7 @@ class ElementMatcher(object):
     def _content_matches(self, element):
         if not self.content:
             return True
-        return self.content in element.string
+        return element.string and self.content in element.string
 
     def _attributes_match(self, element):
         for key, value in self.attrs.items():
@@ -64,8 +73,20 @@ class ElementMatcher(object):
                 return True
         return False
 
+    # TODO Move __repr__ into an as_html method and build a proper __repr__ impl
+
     def __repr__(self):
-        return self.__unicode__()
+        element_name = self.name_regex[1:-1].replace('(', '').replace(')', '').replace('.*', 'xxxany').replace('|', 'xxxor')
+        attr_string = ''
+        for key, value in self.attrs.items():
+            attr_string += ' {0}="{1}"'.format(key, value)
+        html_string = '<{0}{1}>'.format(element_name, attr_string)
+        if self.content:
+            html_string += self.content
+        for child in self.children:
+            html_string += repr(child)
+        html_string += '</{0}>'.format(element_name)
+        return html_string
 
     def __unicode__(self):
         return 'ElementMatcher[name_regex={0},content={1}]'.format(self.name_regex, self.content)
@@ -121,3 +142,16 @@ def acc_heading(*children, **attrs):
 def acc_body(*children, **attrs):
     attrs['class'] = 'accordion-body'
     return ElementMatcher(r'^div$', *children, **attrs)
+
+
+# TODO Move this to an as_html method on the element matchers
+
+
+def pretty_spec(spec):
+    spec_as_html = BeautifulSoup(repr(spec))
+    return spec_as_html.prettify().replace('xxxany', '*').replace('&lt;', '<').replace('&gt;', '>').replace('xxxor', '|')
+
+
+def pretty_html(html_src):
+    parsed_html = BeautifulSoup(html_src)
+    return parsed_html.prettify()

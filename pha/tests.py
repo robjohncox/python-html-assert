@@ -1,6 +1,6 @@
 import unittest
 
-from pha import elem, html_matches, html, heading, text, a, accordion, acc_group, acc_body, acc_heading
+from pha import elem, html_matches, html, heading, text, a, accordion, acc_group, acc_body, acc_heading, pretty_spec, pretty_html
 
 
 class UnitTests(unittest.TestCase):
@@ -105,12 +105,22 @@ class UnitTests(unittest.TestCase):
         spec = html(
             accordion(
                 acc_group(
-                    acc_heading(text('Rick'), a(href='www.rick.com', link_text='Rick Website')),
-                    acc_body(heading('Foo'))
+                    acc_heading(
+                        text('Rick'),
+                        a(href='www.rick.com', link_text='Rick Website')
+                    ),
+                    acc_body(
+                        heading('Foo')
+                    )
                 ),
                 acc_group(
-                    acc_heading( text('Tom'), a(href='www.tom.com', link_text='Tom Website')),
-                    acc_body(heading('Bar'))
+                    acc_heading(
+                        text('Tom'),
+                        a(href='www.tom.com', link_text='Tom Website')
+                    ),
+                    acc_body(
+                        heading('Bar')
+                    )
                 )
             )
         )
