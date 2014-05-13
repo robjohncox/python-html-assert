@@ -85,6 +85,10 @@ class ElementMatcher(object):
         return False
 
     def as_html(self):
+        html_parsed = BeautifulSoup(self._as_html())
+        return html_parsed.prettify().replace('xxxany', '*').replace('&lt;', '<').replace('&gt;', '>').replace('xxxor', '|')
+
+    def _as_html(self):
         element_name = self.name_regex[1:-1].replace('(', '').replace(')', '').replace('.*', 'xxxany').replace('|', 'xxxor')
         attr_string = ''
         for key, value in self.attrs.items():
@@ -93,7 +97,7 @@ class ElementMatcher(object):
         if self.content:
             html_string += self.content
         for child in self.children:
-            html_string += child.as_html()
+            html_string += child._as_html()
         html_string += '</{0}>'.format(element_name)
         return html_string
 

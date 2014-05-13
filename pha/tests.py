@@ -130,6 +130,44 @@ class UnitTests(unittest.TestCase):
     def test_div_element(self):
         self.assert_match('<html><div class="rob"></div></html>', html(div(class_='rob')))
 
+    def test_nested_recursive_first_element(self):
+        html_src = """
+                    <html>
+                        <div>
+                            <h1>Hello</h1>
+                        </div>
+                        <p>Content</p>
+                        <a href="www.google.com">Google</a>
+                    </html>
+                   """
+
+        spec = html(
+            heading('Hello'),
+            text('Content'),
+            a(href='www.google.com', link_text='Google')
+        )
+
+        self.assert_match(html_src, spec)
+
+    def test_nested_recursive_middle_element(self):
+        html_src = """
+                    <html>
+                        <h1>Hello</h1>
+                        <div>
+                            <p>Content</p>
+                        </div>
+                        <a href="www.google.com">Google</a>
+                    </html>
+                   """
+
+        spec = html(
+            heading('Hello'),
+            text('Content'),
+            a(href='www.google.com', link_text='Google')
+        )
+
+        self.assert_match(html_src, spec)
+
     def assert_match(self, html_src, spec):
         self.assertTrue(html_matches(spec, html_src))
 
