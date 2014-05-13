@@ -29,7 +29,6 @@ setup(
     name='python-html-assert',
     version='0.1',
     description='partial matching of html using a tree-based specification',
-    long_description=open(os.path.join(os.path.dirname(__file__), 'README.txt')).read(),
     url='https://github.com/robjohncox/python-html-assert',
     license='MIT License',
     platforms=['MacOS x', 'Linux'],
