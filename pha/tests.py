@@ -1,6 +1,6 @@
 import unittest
 
-from pha import elem, html_matches, html, heading, text, a, accordion, acc_group, acc_body, acc_heading, div
+from pha import elem, html_match, html, heading, text, a, accordion, acc_group, acc_body, acc_heading, div
 
 
 class UnitTests(unittest.TestCase):
@@ -78,11 +78,12 @@ class UnitTests(unittest.TestCase):
         html_src = """
                     <html>
                         <body>
-                            <div class="accordion">
+                            <div class="accordion">>
                                 <div class="accordion-group">
                                     <div class="accordion-heading">
                                         <p>Rick</p>
                                         <a href="www.rick.com">Rick Website</a>
+                                        <p>Remove Me</p>
                                     </div>
                                     <div class="accordion-body">
                                         <h1>Foo</h1>
@@ -130,6 +131,19 @@ class UnitTests(unittest.TestCase):
     def test_div_element(self):
         self.assert_match('<html><div class="rob"></div></html>', html(div(class_='rob')))
 
+    def test_content_mixed_with_tags(self):
+        html_src = """
+                    <a class="btn btn-small btn-primary pull-right" href="/accounts/users/new/">
+                        <i class="icon-plus icon-white">
+                        </i>
+                        Create New User
+                    </a>
+                   """
+
+        spec = a(href='/accounts/users/new/', link_text='Create New User')
+
+        self.assert_match(html_src, spec)
+
     def test_nested_recursive_first_element(self):
         html_src = """
                     <html>
@@ -168,11 +182,498 @@ class UnitTests(unittest.TestCase):
 
         self.assert_match(html_src, spec)
 
+    def test_more_complex_nested_structure(self):
+        html_src = """
+                    <div class="accordion-heading">
+                        <div class="accordion-toggle">
+                            <div class="ordericons"/>
+                            <a>
+                                <div>Rick</div>
+                                <div>Labminds</div>
+                            </a>
+                        </div>
+                    </div>
+                   """
+
+        spec = acc_heading(
+            text('Rick'),
+            text('Labminds')
+        )
+
+        self.assert_match(html_src, spec)
+
+    def test_big_example(self):
+        html_src = """
+                    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+                    <html xmlns="http://www.w3.org/1999/xhtml">
+                     <head>
+                      <title>
+                       Users - LabOS
+                      </title>
+                     </head>
+                     <body>
+                      <div id="wrap">
+                       <div class="navbar-wrapper">
+                        <div class="navbar navbar-inverse navbar-static-top">
+                         <div class="navbar-inner">
+                          <div class="container">
+                           <!-- Navigation menus -->
+                           <div class="nav-collapse collapse">
+                            <ul class="nav">
+                             <!-- Admin menu -->
+                             <li class="dropdown active" id="admin-dropdown">
+                              <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                               Admin
+                               <b class="caret">
+                               </b>
+                              </a>
+                              <ul class="dropdown-menu">
+                               <li class="nav-header">
+                                Manage Users
+                               </li>
+                               <li>
+                                <a href="/accounts/users/">
+                                 User List
+                                </a>
+                               </li>
+                               <li>
+                                <a href="/accounts/users/new/">
+                                 Create New User
+                                </a>
+                               </li>
+                              </ul>
+                             </li>
+                            </ul>
+                            <!-- User menu -->
+                            <ul class="nav pull-right">
+                             <li class="dropdown" id="user-dropdown">
+                              <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                               <i class="icon-user icon-white">
+                               </i>
+                               <strong>
+                                Ricklef
+                               </strong>
+                               (Labminds)
+                               <b class="caret">
+                               </b>
+                              </a>
+                              <ul class="dropdown-menu">
+                               <li>
+                                <a href="/accounts/users/Ricklef/profile/">
+                                 View Profile
+                                </a>
+                               </li>
+                               <li>
+                                <a href="/auth/change-password/?next=/accounts/users/">
+                                 Change Password
+                                </a>
+                               </li>
+                               <li class="divider">
+                               </li>
+                               <li>
+                                <a href="/accounts/users/feedback">
+                                 Feedback
+                                </a>
+                               </li>
+                               <li class="divider">
+                               </li>
+                               <li>
+                                <a href="/auth/logout/">
+                                 Logout
+                                </a>
+                               </li>
+                              </ul>
+                             </li>
+                            </ul>
+                           </div>
+                          </div>
+                         </div>
+                        </div>
+                       </div>
+                       <div class="container">
+                        <!-- Support for displaying django user messages -->
+                        <!-- Display page heading -->
+                        <div class="row-fluid">
+                         <span class="span12">
+                          <h3>
+                           Users
+                          </h3>
+                         </span>
+                        </div>
+                        <!-- Placeholder for the main content pane -->
+                        <a class="btn btn-small btn-primary pull-right" href="/accounts/users/new/">
+                         <i class="icon-plus icon-white">
+                         </i>
+                         Create New User
+                        </a>
+                        <h4>
+                         Active Users
+                        </h4>
+                        <div class="accordion" id="active_users">
+                         <div class="accordion-group">
+                          <div class="accordion-heading row-fluid">
+                           <div class="accordion-toggle group-accordion-toggle">
+                            <div class="ordericons pull-right dropdown">
+                             <!-- User functions -->
+                             <div class="btn-group" id="btn_group_Ricklef">
+                              <a class="btn btn-small btn-primary" href="/accounts/users/Ricklef/profile/">
+                               <i class="icon-user icon-white">
+                               </i>
+                               <span class="hidden-phone">
+                                View Profile
+                               </span>
+                              </a>
+                              <button class="btn btn-small btn-primary dropdown-toggle" data-toggle="dropdown">
+                               <span class="caret">
+                               </span>
+                              </button>
+                              <ul class="dropdown-menu">
+                               <li>
+                                <a class="btn btn-small btn-primary" href="/accounts/users/Ricklef/profile/">
+                                 <i class="icon-user">
+                                 </i>
+                                 View Profile
+                                </a>
+                               </li>
+                              </ul>
+                             </div>
+                            </div>
+                            <a data-parent="#active_users" data-toggle="collapse" href="#active_users_Ricklef_body">
+                             <div class="span4">
+                              <strong>
+                               Ricklef Wohlers (Ricklef)
+                              </strong>
+                             </div>
+                             <div class="span5 hidden-phone muted">
+                              Labminds (admin)
+                             </div>
+                            </a>
+                           </div>
+                          </div>
+                          <div class="accordion-body collapse" id="active_users_Ricklef_body">
+                           <div class="accordion-inner">
+                            <div class="row-fluid">
+                             <div class="span8 well">
+                              <table class="table table-condensed">
+                               <thead>
+                                <tr>
+                                 <th colspan="2">
+                                  User Details
+                                 </th>
+                                </tr>
+                               </thead>
+                               <tr>
+                                <td>
+                                 Username
+                                </td>
+                                <td>
+                                 Ricklef
+                                </td>
+                               </tr>
+                               <tr>
+                                <td>
+                                 Org Group
+                                </td>
+                                <td>
+                                 Labminds
+                                </td>
+                               </tr>
+                               <tr>
+                                <td>
+                                 Permission Group
+                                </td>
+                                <td>
+                                 admin
+                                </td>
+                               </tr>
+                               <tr>
+                                <td>
+                                 Email Address
+                                </td>
+                                <td>
+                                 ricklef@labminds.co.uk
+                                </td>
+                               </tr>
+                               <tr>
+                                <td>
+                                 Date Setup
+                                </td>
+                                <td>
+                                 May 13, 2014, 7:35 a.m.
+                                </td>
+                               </tr>
+                               <tr>
+                                <td>
+                                 Last Login
+                                </td>
+                                <td>
+                                 May 13, 2014, 7:35 a.m.
+                                </td>
+                               </tr>
+                              </table>
+                             </div>
+                             <div class="span4 well">
+                              <img src="/static/img/user_icons/male_long.png" width="280"/>
+                             </div>
+                            </div>
+                           </div>
+                          </div>
+                         </div>
+                         <div class="accordion-group">
+                          <div class="accordion-heading row-fluid">
+                           <div class="accordion-toggle group-accordion-toggle">
+                            <div class="ordericons pull-right dropdown">
+                             <!-- User functions -->
+                             <div class="btn-group" id="btn_group_Ville">
+                              <a class="btn btn-small btn-primary" href="/accounts/users/Ville/profile/">
+                               <i class="icon-user icon-white">
+                               </i>
+                               <span class="hidden-phone">
+                                View Profile
+                               </span>
+                              </a>
+                              <button class="btn btn-small btn-primary dropdown-toggle" data-toggle="dropdown">
+                               <span class="caret">
+                               </span>
+                              </button>
+                              <ul class="dropdown-menu">
+                               <!-- Activate/deactivate user -->
+                               <li>
+                                <a href="/accounts/users/Ville/deactivate/">
+                                 <i class="icon-remove">
+                                 </i>
+                                 Deactivate
+                                </a>
+                               </li>
+                               <!-- Change users group -->
+                               <li>
+                                <a href="/accounts/users/Ville/change-group/admin">
+                                 <i class="icon-hand-up">
+                                 </i>
+                                 Grant Admin Privileges
+                                </a>
+                               </li>
+                              </ul>
+                             </div>
+                            </div>
+                            <a data-parent="#active_users" data-toggle="collapse" href="#active_users_Ville_body">
+                             <div class="span4">
+                              <strong>
+                               Ville Lehtonen (Ville)
+                              </strong>
+                             </div>
+                             <div class="span5 hidden-phone muted">
+                              Labminds (users)
+                             </div>
+                            </a>
+                           </div>
+                          </div>
+                          <div class="accordion-body collapse" id="active_users_Ville_body">
+                           <div class="accordion-inner">
+                            <div class="row-fluid">
+                             <div class="span8 well">
+                              <table class="table table-condensed">
+                               <thead>
+                                <tr>
+                                 <th colspan="2">
+                                  User Details
+                                 </th>
+                                </tr>
+                               </thead>
+                               <tr>
+                                <td>
+                                 Username
+                                </td>
+                                <td>
+                                 Ville
+                                </td>
+                               </tr>
+                               <tr>
+                                <td>
+                                 Org Group
+                                </td>
+                                <td>
+                                 Labminds
+                                </td>
+                               </tr>
+                               <tr>
+                                <td>
+                                 Permission Group
+                                </td>
+                                <td>
+                                 users
+                                </td>
+                               </tr>
+                               <tr>
+                                <td>
+                                 Email Address
+                                </td>
+                                <td>
+                                 ville@labminds.co.uk
+                                </td>
+                               </tr>
+                               <tr>
+                                <td>
+                                 Date Setup
+                                </td>
+                                <td>
+                                 May 13, 2014, 7:35 a.m.
+                                </td>
+                               </tr>
+                               <tr>
+                                <td>
+                                 Last Login
+                                </td>
+                                <td>
+                                 May 13, 2014, 7:35 a.m.
+                                </td>
+                               </tr>
+                              </table>
+                             </div>
+                             <div class="span4 well">
+                              <img src="/static/img/user_icons/male_long.png" width="280"/>
+                             </div>
+                            </div>
+                           </div>
+                          </div>
+                         </div>
+                        </div>
+                       </div>
+                      </div>
+                     </body>
+                    </html>
+                   """
+
+        spec = html(
+            div(
+                div(
+                    heading('Users')
+                ),
+                a(href='/accounts/users/new/', link_text='Create New User'),
+                heading('Active Users'),
+                accordion(
+                    acc_group(
+                        acc_heading(
+                            a(href='/accounts/users/Ricklef/profile/'),
+                            text('Ricklef Wohlers (Ricklef)'),
+                            text('Labminds (admin)'),
+                        )
+                    )
+                )
+            )
+        )
+
+        self.assert_match(html_src, spec)
+
+    def test_that_fails_when_we_use_the_recursive_parser(self):
+        from pha import pretty_spec
+
+        html_src = """
+                    <html xmlns="http://www.w3.org/1999/xhtml">
+                     <body>
+                      <div id="wrap">
+                       <div class="navbar-wrapper" MATCH="2">
+                        <div class="navbar navbar-inverse navbar-static-top">
+                         <div class="navbar-inner">
+                          <div class="container">
+                           <!-- Navigation menus -->
+                           <div class="nav-collapse collapse">
+                           </div>
+                          </div>
+                         </div>
+                        </div>
+                       </div>
+                       <div class="container">
+                        <!-- Support for displaying django user messages -->
+                        <!-- Display page heading -->
+                        <div class="row-fluid">
+                         <span class="span12">
+                          <h3 MATCH="3">
+                           Users
+                          </h3>
+                         </span>
+                        </div>
+                        <!-- Placeholder for the main content pane -->
+                        <a class="btn btn-small btn-primary pull-right" href="/accounts/users/new/">
+                         <i class="icon-plus icon-white">
+                         </i>
+                         Create New User
+                        </a>
+                        <h4>
+                         Active Users
+                        </h4>
+                        <div class="accordion" id="active_users">
+                         <div class="accordion-group">
+                          <div class="accordion-heading row-fluid">
+                           <div class="accordion-toggle group-accordion-toggle">
+                            <div class="ordericons pull-right dropdown">
+                             <!-- User functions -->
+                             <div class="btn-group" id="btn_group_Ricklef">
+                              <a class="btn btn-small btn-primary" href="/accounts/users/Ricklef/profile/">
+                               <i class="icon-user icon-white">
+                               </i>
+                               <span class="hidden-phone">
+                                View Profile
+                               </span>
+                              </a>
+                              <button class="btn btn-small btn-primary dropdown-toggle" data-toggle="dropdown">
+                               <span class="caret">
+                               </span>
+                              </button>
+                              <ul class="dropdown-menu">
+                               <li>
+                                <a class="btn btn-small btn-primary" href="/accounts/users/Ricklef/profile/">
+                                 <i class="icon-user">
+                                 </i>
+                                 View Profile
+                                </a>
+                               </li>
+                              </ul>
+                             </div>
+                            </div>
+                            <a data-parent="#active_users" data-toggle="collapse" href="#active_users_Ricklef_body">
+                             <div class="span4">
+                              <strong>
+                               Ricklef Wohlers (Ricklef)
+                              </strong>
+                             </div>
+                             <div class="span5 hidden-phone muted">
+                              Labminds (admin)
+                             </div>
+                            </a>
+                           </div>
+                          </div>
+                         </div>
+                        </div>
+                       </div>
+                      </div>
+                     </body>
+                    </html>
+                   """
+
+        spec = html(
+            div(
+                div(heading('Users')),
+                a(href='/accounts/users/new/', link_text='Create New User'),
+                heading('Active Users'),
+                accordion(
+                    acc_group(
+                        acc_heading(
+                            text('Ricklef Wohlers (Ricklef)'),
+                            text('Labminds (admin)'),
+                        )
+                    )
+                )
+            )
+        )
+
+        self.assert_match(html_src, spec)
+
     def assert_match(self, html_src, spec):
-        self.assertTrue(html_matches(spec, html_src))
+        self.assertTrue(html_match(spec, html_src))
 
     def assert_not_match(self, html_src, spec):
-        self.assertFalse(html_matches(spec, html_src))
+        self.assertFalse(html_match(spec, html_src))
 
 
 if __name__ == '__main__':

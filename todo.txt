@@ -1,0 +1,19 @@
+[Logging]
+  - Add in detailed logging to aid with debugging
+  - Proper str, repr and unicode implementations on ElementDef
+
+[Parsing]
+  - Fix the recursive matcher
+  - Allow users to select which matcher to use
+  - Return a proper results object that allows better introspection of failures
+
+[Specification]
+  - Separate out bootstrap specific helpers into a separate module
+
+[Testing]
+  - Split existing test class into more sensible suites of tests
+  - Write tests specific to special features of the ElementDef class
+  - Write tests for the formatters
+
+[Utils]
+  - Mixin for test cases to expose a normal style assert method
