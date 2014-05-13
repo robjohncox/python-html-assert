@@ -7,7 +7,7 @@ def linear_match(spec, content):
 
     root_element = BeautifulSoup(content)
     all_element_definitions = _flatten_element_definitions(spec)
-    prune_unmatched_elements(root_element, all_element_definitions)
+    _prune_unmatched_elements(root_element, all_element_definitions)
 
     element_def_index = 0
     for element in [desc for desc in root_element.descendants if type(desc) is Tag]:
@@ -36,7 +36,11 @@ def _flatten_element_definitions_rec(current_element_def, all_element_definition
         _flatten_element_definitions_rec(child, all_element_definitions)
 
 
-def prune_unmatched_elements(element, all_element_definitions):
+def prune_unmatched_elements(root_element, spec):
+    return _prune_unmatched_elements(root_element, _flatten_element_definitions(spec))
+
+
+def _prune_unmatched_elements(element, all_element_definitions):
     """ Removes elements in the tree which don't match any def or carry children who match any def """
 
     i_match_anything = any(_matches(elem_def, element) for elem_def in all_element_definitions)
@@ -45,7 +49,7 @@ def prune_unmatched_elements(element, all_element_definitions):
     children_to_extract = []
     child_matched_anything = False
     for child_element in [child for child in element.children if type(child) is Tag]:
-        if prune_unmatched_elements(child_element, all_element_definitions):
+        if _prune_unmatched_elements(child_element, all_element_definitions):
             child_matched_anything = True
         else:
             children_to_extract.append(child_element)

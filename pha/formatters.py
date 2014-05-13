@@ -10,7 +10,7 @@ def pretty_html(html_src):
 
 def pretty_minimal_html(html_src, spec):
     parsed_html = BeautifulSoup(html_src)
-    prune_unmatched_elements(parsed_html)
+    prune_unmatched_elements(parsed_html, spec)
     return parsed_html.prettify()
 
 
