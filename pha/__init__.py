@@ -17,7 +17,18 @@ class ElementMatcher(object):
         self.children = [child for child in children if child]
         self.attrs = attrs
 
+        self._handle_escaped_attrs()
         self.content = self._keyword_attr('content')
+
+    def _handle_escaped_attrs(self):
+        attrs_to_replace = list()
+        for key, value in self.attrs.items():
+            if key.endswith('_'):
+                self.attrs[key.replace('_', '')] = value
+                attrs_to_replace.append(key)
+
+        for key in attrs_to_replace:
+            del self.attrs[key]
         
     def _keyword_attr(self, attr_name):
         if attr_name in self.attrs:
@@ -73,9 +84,7 @@ class ElementMatcher(object):
                 return True
         return False
 
-    # TODO Move __repr__ into an as_html method and build a proper __repr__ impl
-
-    def __repr__(self):
+    def as_html(self):
         element_name = self.name_regex[1:-1].replace('(', '').replace(')', '').replace('.*', 'xxxany').replace('|', 'xxxor')
         attr_string = ''
         for key, value in self.attrs.items():
@@ -84,9 +93,12 @@ class ElementMatcher(object):
         if self.content:
             html_string += self.content
         for child in self.children:
-            html_string += repr(child)
+            html_string += child.as_html()
         html_string += '</{0}>'.format(element_name)
         return html_string
+
+    def __repr__(self):
+        return self.__unicode__()  # TODO Better object methods (__repr__, __unicode__ etc)
 
     def __unicode__(self):
         return 'ElementMatcher[name_regex={0},content={1}]'.format(self.name_regex, self.content)
@@ -125,24 +137,27 @@ def a(href=None, link_text=None, *children, **attrs):
 
 
 def accordion(*children, **attrs):
-    attrs['class'] = 'accordion'
-    return ElementMatcher(r'^div$', *children, **attrs)
+    attrs['class_'] = 'accordion'
+    return div(*children, **attrs)
 
 
 def acc_group(*children, **attrs):
-    attrs['class'] = 'accordion-group'
-    return ElementMatcher(r'^div$', *children, **attrs)
+    attrs['class_'] = 'accordion-group'
+    return div(*children, **attrs)
 
 
 def acc_heading(*children, **attrs):
-    attrs['class'] = 'accordion-heading'
-    return ElementMatcher(r'^div$', *children, **attrs)
+    attrs['class_'] = 'accordion-heading'
+    return div(*children, **attrs)
 
 
 def acc_body(*children, **attrs):
-    attrs['class'] = 'accordion-body'
-    return ElementMatcher(r'^div$', *children, **attrs)
+    attrs['class_'] = 'accordion-body'
+    return div(*children, **attrs)
 
+
+def div(*children, **attrs):
+    return ElementMatcher(r'^div$', *children, **attrs)
 
 # TODO Move this to an as_html method on the element matchers
 

@@ -1,6 +1,6 @@
 import unittest
 
-from pha import elem, html_matches, html, heading, text, a, accordion, acc_group, acc_body, acc_heading, pretty_spec, pretty_html
+from pha import elem, html_matches, html, heading, text, a, accordion, acc_group, acc_body, acc_heading, div
 
 
 class UnitTests(unittest.TestCase):
@@ -127,14 +127,14 @@ class UnitTests(unittest.TestCase):
 
         self.assert_match(html_src, spec)
 
+    def test_div_element(self):
+        self.assert_match('<html><div class="rob"></div></html>', html(div(class_='rob')))
+
     def assert_match(self, html_src, spec):
         self.assertTrue(html_matches(spec, html_src))
 
     def assert_not_match(self, html_src, spec):
         self.assertFalse(html_matches(spec, html_src))
-
-
-# TODO How do we verify the class attribute?
 
 
 if __name__ == '__main__':
