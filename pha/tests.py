@@ -255,6 +255,7 @@ class ElementDefHelperTests(BaseElementDefTests):
 
     def test_input_element(self):
         self.assert_match('<input id="abc" value="rob"/>', input('abc', 'rob'))
+        self.assert_match('<input id="abc"/>', input('abc'))
 
     def test_img_element(self):
         self.assert_match('<img src="/some/file"/>', img('/some/file'))

@@ -107,9 +107,10 @@ def div(*children, **attrs):
     return ElementDef(r'^div$', *children, **attrs)
 
 
-def input(id, value, *children, **attrs):
+def input(id, value=None, *children, **attrs):
     attrs['id'] = id
-    attrs['value'] = value
+    if value:
+        attrs['value'] = value
     return ElementDef(r'^input$', *children, **attrs)
 
 
