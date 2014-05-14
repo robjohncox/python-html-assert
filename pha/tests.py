@@ -261,17 +261,17 @@ class ElementDefHelperTests(BaseElementDefTests):
         html_src = """
                     <html>
                         <select id='abc'>
-                            <option value='1'/>
-                            <option value='2' selected='selected'/>
-                            <option value='3'/>
+                            <option value='1'>1</option>
+                            <option value='2' selected='selected'>2</option>
+                            <option value='3'>3</option>
                         </select>
                     </html>
                    """
 
         spec = html(
             select('abc',
-                   option('1'),
-                   option('2', selected=True),
+                   option('1', '1'),
+                   option('2', '2', selected=True),
                    option('3')
             )
         )
