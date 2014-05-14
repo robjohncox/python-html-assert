@@ -15,6 +15,8 @@ from spec import (
     html,
     img,
     input,
+    option,
+    select,
     text,
 )
 

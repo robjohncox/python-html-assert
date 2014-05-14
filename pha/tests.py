@@ -1,7 +1,7 @@
 import unittest
 
 from pha import elem, html_match, html, heading, text, a, accordion, acc_group, acc_body, acc_heading, div, input,\
-    img
+    img, select, option
 
 
 class BaseElementDefTests(unittest.TestCase):
@@ -256,6 +256,27 @@ class ElementDefHelperTests(BaseElementDefTests):
     def test_input_element(self):
         self.assert_match('<input id="abc" value="rob"/>', input('abc', 'rob'))
         self.assert_match('<input id="abc"/>', input('abc'))
+
+    def test_select_element(self):
+        html_src = """
+                    <html>
+                        <select id='abc'>
+                            <option value='1'/>
+                            <option value='2' selected='selected'/>
+                            <option value='3'/>
+                        </select>
+                    </html>
+                   """
+
+        spec = html(
+            select('abc',
+                   option('1'),
+                   option('2', selected=True),
+                   option('3')
+            )
+        )
+
+        self.assert_match(html_src, spec)
 
     def test_img_element(self):
         self.assert_match('<img src="/some/file"/>', img('/some/file'))

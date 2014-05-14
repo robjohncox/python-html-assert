@@ -114,6 +114,18 @@ def input(id, value=None, *children, **attrs):
     return ElementDef(r'^input$', *children, **attrs)
 
 
+def select(id, *children, **attrs):
+    attrs['id'] = id
+    return ElementDef(r'^select$', *children, **attrs)
+
+
+def option(value, selected=False, *children, **attrs):
+    attrs['value'] = value
+    if selected:
+        attrs['selected'] = 'selected'
+    return ElementDef(r'^option', *children, **attrs)
+
+
 def img(src, *children, **attrs):
     attrs['src'] = src
     return ElementDef(r'^img$', *children, **attrs)
