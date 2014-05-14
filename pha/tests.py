@@ -1,9 +1,55 @@
 import unittest
 
-from pha import elem, html_match, html, heading, text, a, accordion, acc_group, acc_body, acc_heading, div, pretty_spec, pretty_html
+from pha import elem, html_match, html, heading, text, a, accordion, acc_group, acc_body, acc_heading, div, input,\
+    img
 
 
-class UnitTests(unittest.TestCase):
+class BaseElementDefTests(unittest.TestCase):
+
+    def assert_match(self, html_src, spec):
+        result = html_match(spec, html_src)
+        print(unicode(result))
+        self.assertTrue(result.passed)
+
+    def assert_not_match(self, html_src, spec):
+        result = html_match(spec, html_src)
+        print(unicode(result))
+        self.assertTrue(result.failed)
+
+
+class ElementDefConstructionTests(BaseElementDefTests):
+
+    def test_element_def_construction(self):
+        child_element_def = text('child')
+        parent_element_def = elem('parent', child_element_def, id="abc", title="the parent")
+
+        self.assertEquals(r'^parent$', parent_element_def.name_regex)
+        self.assertIsNotNone(parent_element_def.name_matcher)
+        self.assertIsNone(parent_element_def.content)
+        self.assertIsNone(parent_element_def.parent)
+        self.assertEquals(1, len(parent_element_def.children))
+        self.assertIn(child_element_def, parent_element_def.children)
+        self.assertEquals(2, len(parent_element_def.attrs))
+        self.assertEquals('abc', parent_element_def.attrs['id'])
+        self.assertEquals('the parent', parent_element_def.attrs['title'])
+
+        self.assertEquals(parent_element_def, child_element_def.parent)
+        self.assertEquals('child', child_element_def.content)
+
+    def test_element_def_construction_with_content_as_keyword(self):
+        element_def = elem('element', content='Some content')
+
+        self.assertEquals('Some content', element_def.content)
+        self.assertFalse('content' in element_def.attrs)
+
+    def test_element_def_construction_with_escaped_attribute_name(self):
+        element_def = elem('element', class_='some-class')
+
+        self.assertEquals('some-class', element_def.attrs['class'])
+        self.assertFalse('class_' in element_def.attrs)
+
+
+class SimpleMatchingTests(BaseElementDefTests):
 
     def test_root_element_match(self):
         self.assert_match('<html></html>', elem('html'))
@@ -55,6 +101,82 @@ class UnitTests(unittest.TestCase):
 
     def test_nested_elements_with_wrong_child_element_not_matched(self):
         self.assert_not_match('<html><body/></html>', elem('html', (elem('div'))))
+
+
+class MatchingResultTests(BaseElementDefTests):
+
+    def test_result_object_passing(self):
+        html_src = """
+                    <html>
+                        <p>Content found</p>
+                    </html>
+                   """
+
+        spec = html(text('Content found'))
+
+        result = html_match(spec, html_src)
+
+        self.assertEquals(spec, result.spec)
+        self.assertEquals(html_src, result.html_src)
+        self.assertIsNotNone(result.root_element)
+        self.assertTrue(result.passed)
+        self.assertFalse(result.failed)
+        self.assertEquals(0, len(result.element_defs_not_found))
+        self.assertIsNone(result.failed_on_def)
+
+    def test_result_object_failed_with_element_def_not_matching_any_element(self):
+        html_src = """
+                    <html>
+                        <p>Content found</p>
+                    </html>
+                   """
+
+        heading_not_found_def = text('Heading not found')
+        text_not_found_def = text('Text not found')
+        spec = html(
+            heading_not_found_def,
+            text('Content found'),
+            text_not_found_def
+        )
+
+        result = html_match(spec, html_src)
+
+        self.assertEquals(spec, result.spec)
+        self.assertEquals(html_src, result.html_src)
+        self.assertIsNotNone(result.root_element)
+        self.assertFalse(result.passed)
+        self.assertTrue(result.failed)
+        self.assertEquals(2, len(result.element_defs_not_found))
+        self.assertIn(heading_not_found_def, result.element_defs_not_found)
+        self.assertIn(text_not_found_def, result.element_defs_not_found)
+        self.assertEquals(heading_not_found_def, result.failed_on_def)
+
+    def test_result_object_failed_with_matcher_not_matched_because_html_out_of_order(self):
+        html_src = """
+                    <html>
+                        <p>Content found</p>
+                        <h1>Heading not found</h1>
+                    </html>
+                   """
+
+        heading_not_found_def = text('Heading not found')
+        spec = html(
+            heading_not_found_def,
+            text('Content found'),
+        )
+
+        result = html_match(spec, html_src)
+
+        self.assertEquals(spec, result.spec)
+        self.assertEquals(html_src, result.html_src)
+        self.assertIsNotNone(result.root_element)
+        self.assertFalse(result.passed)
+        self.assertTrue(result.failed)
+        self.assertEquals(0, len(result.element_defs_not_found))
+        self.assertEquals(heading_not_found_def, result.failed_on_def)
+
+
+class ElementDefHelperTests(BaseElementDefTests):
 
     def test_html_element(self):
         self.assert_match('<html/>', html())
@@ -131,6 +253,15 @@ class UnitTests(unittest.TestCase):
     def test_div_element(self):
         self.assert_match('<html><div class="rob"></div></html>', html(div(class_='rob')))
 
+    def test_input_element(self):
+        self.assert_match('<input id="abc" value="rob"/>', input('abc', 'rob'))
+
+    def test_img_element(self):
+        self.assert_match('<img src="/some/file"/>', img('/some/file'))
+
+
+class NestedElementDefTests(BaseElementDefTests):
+
     def test_content_mixed_with_tags(self):
         html_src = """
                     <a class="btn btn-small btn-primary pull-right" href="/accounts/users/new/">
@@ -201,6 +332,9 @@ class UnitTests(unittest.TestCase):
         )
 
         self.assert_match(html_src, spec)
+
+
+class ComplexElementDefTests(BaseElementDefTests):
 
     def test_big_example(self):
         html_src = """
@@ -668,14 +802,6 @@ class UnitTests(unittest.TestCase):
         )
 
         self.assert_match(html_src, spec)
-
-    def assert_match(self, html_src, spec):
-        print(pretty_html(html_src))
-        print(pretty_spec(spec))
-        self.assertTrue(html_match(spec, html_src))
-
-    def assert_not_match(self, html_src, spec):
-        self.assertFalse(html_match(spec, html_src))
 
 
 if __name__ == '__main__':

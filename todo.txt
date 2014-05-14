@@ -1,18 +1,20 @@
+[Clean Code]
+ - Is element def the right name? And are we confusing this with the concept of matchers?
+
 [Logging]
-  - Add in detailed logging to aid with debugging
-  - Proper str, repr and unicode implementations on ElementDef
+  - Show path to failing matcher when printing results
+  - Add hints to the result on how to look for the problem
+     - If failed matcher not matching anything, then that's the problem
+     - If failed matcher does match something, then structure likely issue
 
 [Parsing]
   - Fix the recursive matcher
   - Allow users to select which matcher to use
-  - Return a proper results object that allows better introspection of failures
 
 [Specification]
   - Separate out bootstrap specific helpers into a separate module
 
 [Testing]
-  - Split existing test class into more sensible suites of tests
-  - Write tests specific to special features of the ElementDef class
   - Write tests for the formatters
 
 [Utils]

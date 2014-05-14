@@ -1,25 +1,89 @@
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
+from .formatters import pretty_html, pretty_spec
 
-def linear_match(spec, content):
+
+class MatcherResult(object):
+    """ Pass/fail result for an attempted match, along with debugging information. """
+
+    def __init__(self, spec, html_src, root_element, passed=True, element_defs_not_found=None, failed_on_def=None):
+        self.spec = spec
+        self.html_src = html_src
+        self.root_element = root_element
+        self.passed = passed
+        self.element_defs_not_found = [] if not element_defs_not_found else element_defs_not_found
+        self.failed_on_def = failed_on_def
+
+    @property
+    def failed(self):
+        return not self.passed
+
+    @property
+    def result_text(self):
+        return 'Passed' if self.passed else 'Failed'
+
+    def pretty_spec(self):
+        return pretty_spec(self.spec)
+
+    def pretty_html_src(self):
+        return pretty_html(self.html_src)
+
+    def __repr__(self):
+        return 'MatcherResult[passed={0},elem_defs_not_found={1},failed_on_def={2}'.format(self.passed,
+                                                                                           self.element_defs_not_found,
+                                                                                           self.failed_on_def)
+
+    def __str__(self):
+        return unicode(self).encode('utf-8')
+
+    def __unicode__(self):
+        result = 'HTML Matching: {0}\n\n'.format(self.result_text.upper())
+
+        if self.failed:
+            if self.failed_on_def:
+                result += 'Failed when attempting to match against {0}\n'.format(unicode(self.failed_on_def))
+            if self.element_defs_not_found:
+                result += 'Some element definitions were not found anywhere in the HTML:\n'
+                for element_def in self.element_defs_not_found:
+                    result += ' - {0}\n'.format(unicode(element_def))
+            result += '\n'
+
+        result += 'Specification:\n{0}\n\n'.format(self.pretty_spec())
+        result += 'Pruned HTML Source:\n{0}\n\n'.format(self.root_element.prettify())
+
+        return result
+
+
+def linear_match(spec, html_src):
     """ Flattens the html and the spec, and check all spec elements appear in order. """
 
-    root_element = BeautifulSoup(content)
+    root_element = BeautifulSoup(html_src)
     all_element_definitions = _flatten_element_definitions(spec)
     _prune_unmatched_elements(root_element, all_element_definitions)
 
     element_def_index = 0
-    for element in [desc for desc in root_element.descendants if type(desc) is Tag]:
-        element_def = all_element_definitions[element_def_index]
-        if _name_matches(element_def, element)\
-                and _content_matches(element_def, element)\
-                and _attributes_match(element_def, element):
+    current_element_def = None
+    for element in _descendant_elements(root_element):
+        current_element_def = all_element_definitions[element_def_index]
+        if _matches(current_element_def, element):
             element_def_index += 1
             if element_def_index == len(all_element_definitions):
-                return True
+                return MatcherResult(spec, html_src, root_element, passed=True)
 
-    return False
+    # We didn't match everything. We report the matcher we failed on, and also check generally for matchers which
+    # do not match a single element
+    element_defs_not_found = []
+    for element_def in all_element_definitions:
+        if not any(element for element in _descendant_elements(root_element) if _matches(element_def, element)):
+            element_defs_not_found.append(element_def)
+
+    return MatcherResult(spec,
+                         html_src,
+                         root_element,
+                         passed=False,
+                         element_defs_not_found=element_defs_not_found,
+                         failed_on_def=current_element_def)
 
 
 def _flatten_element_definitions(spec):
@@ -48,7 +112,7 @@ def _prune_unmatched_elements(element, all_element_definitions):
     # Now I find out whether the children match anything
     children_to_extract = []
     child_matched_anything = False
-    for child_element in [child for child in element.children if type(child) is Tag]:
+    for child_element in _child_elements(element):
         if _prune_unmatched_elements(child_element, all_element_definitions):
             child_matched_anything = True
         else:
@@ -93,6 +157,18 @@ def _attributes_match(element_def, element):
         if key not in element.attrs or value not in element.attrs[key]:
             return False
     return True
+
+
+def _child_elements(element):
+    """ Helper to return the children of an element which are elements themselves. """
+
+    return (child for child in element.children if type(child) is Tag)
+
+
+def _descendant_elements(element):
+    """ Helper to return the descendants of an element which are elements themselves. """
+
+    return (child for child in element.descendants if type(child) is Tag)
 
 
 # def recursive_match(self, element):

@@ -13,11 +13,12 @@ from spec import (
     elem,
     heading,
     html,
+    img,
+    input,
     text,
 )
 
 from formatters import (
     pretty_html,
-    pretty_minimal_html,
     pretty_spec
 )

@@ -1,16 +1,8 @@
 from bs4 import BeautifulSoup
 
-from pha import prune_unmatched_elements
-
 
 def pretty_html(html_src):
     parsed_html = BeautifulSoup(html_src)
-    return parsed_html.prettify()
-
-
-def pretty_minimal_html(html_src, spec):
-    parsed_html = BeautifulSoup(html_src)
-    prune_unmatched_elements(parsed_html, spec)
     return parsed_html.prettify()
 
 
