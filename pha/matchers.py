@@ -49,8 +49,9 @@ class MatcherResult(object):
                     result += ' - {0}\n'.format(unicode(element_def))
             result += '\n'
 
-        result += 'Specification:\n{0}\n\n'.format(self.pretty_spec())
-        result += 'Pruned HTML Source:\n{0}\n\n'.format(self.root_element.prettify())
+            result += 'Specification:\n{0}\n\n'.format(self.pretty_spec())
+            result += 'Pruned HTML Source:\n{0}\n\n'.format(self.root_element.prettify())
+            result += 'Full HTML Source:\n{0}\n\n'.format(self.pretty_html_src())
 
         return result
 
