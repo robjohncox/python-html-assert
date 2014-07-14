@@ -38,20 +38,20 @@ class MatcherResult(object):
         return unicode(self).encode('utf-8')
 
     def __unicode__(self):
-        result = 'HTML Matching: {0}\n\n'.format(self.result_text.upper())
+        result = u'HTML Matching: {0}\n\n'.format(self.result_text.upper())
 
         if self.failed:
             if self.failed_on_def:
-                result += 'Failed when attempting to match against {0}\n'.format(unicode(self.failed_on_def))
+                result += u'Failed when attempting to match against {0}\n'.format(unicode(self.failed_on_def))
             if self.element_defs_not_found:
-                result += 'Some element definitions were not found anywhere in the HTML:\n'
+                result += u'Some element definitions were not found anywhere in the HTML:\n'
                 for element_def in self.element_defs_not_found:
-                    result += ' - {0}\n'.format(unicode(element_def))
-            result += '\n'
+                    result += u' - {0}\n'.format(unicode(element_def))
+            result += u'\n'
 
-            result += 'Specification:\n{0}\n\n'.format(self.pretty_spec())
-            result += 'Pruned HTML Source:\n{0}\n\n'.format(self.root_element.prettify())
-            result += 'Full HTML Source:\n{0}\n\n'.format(self.pretty_html_src())
+            result += u'Specification:\n{0}\n\n'.format(self.pretty_spec())
+            result += u'Pruned HTML Source:\n{0}\n\n'.format(self.root_element.prettify())
+            result += u'Full HTML Source:\n{0}\n\n'.format(self.pretty_html_src())
 
         return result
 
