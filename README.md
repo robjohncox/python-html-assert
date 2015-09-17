@@ -61,7 +61,7 @@ def test_my_html(self):
                )
            )
 
-    self.assertTrue(html_match(html_src, spec))
+    self.assertTrue(html_match(spec, html_src))
 ```
 
 Now, even if there are changes to the HTML that we don't care about, our test may not break. For example, lets say that
