@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import find_packages, setup
 
 
 REQUIREMENTS = [
@@ -20,15 +20,14 @@ CLASSIFIERS = [
     'Topic :: Utilities']
 
 setup(
+    name='python-html-assert',
+    version='0.1.1',
+    packages=find_packages(),
+    install_requires=REQUIREMENTS,
     author='Robert Cox',
     author_email='robjohncox@gmail.com',
-    name='python-html-assert',
-    version=0.1,
     description='partial matching of html using a tree-based specification',
-    url='https://github.com/robjohncox/python-html-assert',
     license='MIT License',
+    url='https://github.com/robjohncox/python-html-assert',
     platforms=['MacOS x', 'Linux'],
-    classifiers=CLASSIFIERS,
-    requires=REQUIREMENTS,
-    packages=PACKAGES)
-
+    classifiers=CLASSIFIERS)
