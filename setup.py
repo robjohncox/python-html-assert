@@ -29,5 +29,4 @@ setup(
     description='partial matching of html using a tree-based specification',
     license='MIT License',
     url='https://github.com/robjohncox/python-html-assert',
-    platforms=['MacOS x', 'Linux'],
     classifiers=CLASSIFIERS)
