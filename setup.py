@@ -23,6 +23,7 @@ setup(
     author='Robert Cox',
     author_email='robjohncox@gmail.com',
     name='python-html-assert',
+    version=0.1,
     description='partial matching of html using a tree-based specification',
     url='https://github.com/robjohncox/python-html-assert',
     license='MIT License',
