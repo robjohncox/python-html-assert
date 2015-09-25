@@ -63,7 +63,7 @@ def test_my_html(self):
             text('This is some text.'),
             elem('table', id='important-table)))
 
-    self.assertTrue(html_match(html_src, spec))
+    self.assertTrue(html_match(spec, html_src))
 ```
 
 Now, even if there are changes to the HTML that we don't care about, our test
