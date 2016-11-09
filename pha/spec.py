@@ -38,20 +38,20 @@ class ElementDef(object):
             del self.attrs[key]
 
     def __repr__(self):
-        return 'ElementMatcher[name_regex={0},content={1},attrs={2}]'.format(self.name_regex, self.content, self.attrs)
+        return u'ElementMatcher[name_regex={0},content={1},attrs={2}]'.format(self.name_regex, self.content, self.attrs)
 
     def __str__(self):
         return unicode(self).encode('utf-8')
 
     def __unicode__(self):
         name = self.name_regex[1:-1]
-        elem_def = '<{0}'.format(name)
+        elem_def = u'<{0}'.format(name)
         for key, value in self.attrs.items():
-            elem_def += ' {0}="{1}"'.format(key, value)
+            elem_def += u' {0}="{1}"'.format(key, value)
         if self.content:
-            elem_def += '>{0}</{1}>'.format(self.content, name)
+            elem_def += u'>{0}</{1}>'.format(self.content, name)
         else:
-            elem_def += '/>'
+            elem_def += u'/>'
 
         return elem_def
 
