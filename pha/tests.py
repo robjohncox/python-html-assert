@@ -278,7 +278,7 @@ class ElementDefHelperTests(BaseElementDefTests):
 
         self.assert_match(html_src, spec)
 
-    def test_select_element(self):
+    def test_select_element_xhtml(self):
         html_src = """
                     <html>
                         <select id='abc'>
