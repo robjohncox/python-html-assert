@@ -1,7 +1,7 @@
 import unittest
 
 from pha import elem, html_match, html, heading, text, a, accordion, acc_group, acc_body, acc_heading, div, input,\
-    img, select, option
+    img, select, option, option_xhtml
 
 
 class BaseElementDefTests(unittest.TestCase):
@@ -262,7 +262,7 @@ class ElementDefHelperTests(BaseElementDefTests):
                     <html>
                         <select id='abc'>
                             <option value='1'>1</option>
-                            <option value='2' selected='selected'>2</option>
+                            <option value='2' selected=''>2</option>
                             <option value='3'>3</option>
                         </select>
                     </html>
@@ -273,6 +273,27 @@ class ElementDefHelperTests(BaseElementDefTests):
                    option('1', '1'),
                    option('2', '2', selected=True),
                    option('3')
+            )
+        )
+
+        self.assert_match(html_src, spec)
+
+    def test_select_element(self):
+        html_src = """
+                    <html>
+                        <select id='abc'>
+                            <option value='1'>1</option>
+                            <option value='2' selected='selected'>2</option>
+                            <option value='3'>3</option>
+                        </select>
+                    </html>
+                   """
+
+        spec = html(
+            select('abc',
+                   option_xhtml('1', '1'),
+                   option_xhtml('2', '2', selected=True),
+                   option_xhtml('3')
             )
         )
 
