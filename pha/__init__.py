@@ -16,6 +16,7 @@ from spec import (
     img,
     input,
     option,
+    option_xhtml,
     select,
     text,
 )

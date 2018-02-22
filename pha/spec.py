@@ -124,6 +124,15 @@ def option(value, content=None, selected=False, *children, **attrs):
     if content:
         attrs['content'] = content
     if selected:
+        attrs['selected'] = ''
+    return ElementDef(r'^option$', *children, **attrs)
+
+
+def option_xhtml(value, content=None, selected=False, *children, **attrs):
+    attrs['value'] = value
+    if content:
+        attrs['content'] = content
+    if selected:
         attrs['selected'] = 'selected'
     return ElementDef(r'^option$', *children, **attrs)
 
