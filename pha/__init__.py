@@ -1,9 +1,9 @@
-from matchers import (
+from .matchers import (
     linear_match as html_match,
     prune_unmatched_elements
 )
 
-from spec import (
+from .spec import (
     a,
     accordion,
     acc_body,
@@ -21,7 +21,7 @@ from spec import (
     text,
 )
 
-from formatters import (
+from .formatters import (
     pretty_html,
     pretty_spec
 )
