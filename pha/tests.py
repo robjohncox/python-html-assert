@@ -8,12 +8,12 @@ class BaseElementDefTests(unittest.TestCase):
 
     def assert_match(self, html_src, spec):
         result = html_match(spec, html_src)
-        print(unicode(result))
+        print(str(result))
         self.assertTrue(result.passed)
 
     def assert_not_match(self, html_src, spec):
         result = html_match(spec, html_src)
-        print(unicode(result))
+        print(str(result))
         self.assertTrue(result.failed)
 
 
@@ -23,29 +23,29 @@ class ElementDefConstructionTests(BaseElementDefTests):
         child_element_def = text('child')
         parent_element_def = elem('parent', child_element_def, id="abc", title="the parent")
 
-        self.assertEquals(r'^parent$', parent_element_def.name_regex)
+        self.assertEqual(r'^parent$', parent_element_def.name_regex)
         self.assertIsNotNone(parent_element_def.name_matcher)
         self.assertIsNone(parent_element_def.content)
         self.assertIsNone(parent_element_def.parent)
-        self.assertEquals(1, len(parent_element_def.children))
+        self.assertEqual(1, len(parent_element_def.children))
         self.assertIn(child_element_def, parent_element_def.children)
-        self.assertEquals(2, len(parent_element_def.attrs))
-        self.assertEquals('abc', parent_element_def.attrs['id'])
-        self.assertEquals('the parent', parent_element_def.attrs['title'])
+        self.assertEqual(2, len(parent_element_def.attrs))
+        self.assertEqual('abc', parent_element_def.attrs['id'])
+        self.assertEqual('the parent', parent_element_def.attrs['title'])
 
-        self.assertEquals(parent_element_def, child_element_def.parent)
-        self.assertEquals('child', child_element_def.content)
+        self.assertEqual(parent_element_def, child_element_def.parent)
+        self.assertEqual('child', child_element_def.content)
 
     def test_element_def_construction_with_content_as_keyword(self):
         element_def = elem('element', content='Some content')
 
-        self.assertEquals('Some content', element_def.content)
+        self.assertEqual('Some content', element_def.content)
         self.assertFalse('content' in element_def.attrs)
 
     def test_element_def_construction_with_escaped_attribute_name(self):
         element_def = elem('element', class_='some-class')
 
-        self.assertEquals('some-class', element_def.attrs['class'])
+        self.assertEqual('some-class', element_def.attrs['class'])
         self.assertFalse('class_' in element_def.attrs)
 
 
@@ -116,12 +116,12 @@ class MatchingResultTests(BaseElementDefTests):
 
         result = html_match(spec, html_src)
 
-        self.assertEquals(spec, result.spec)
-        self.assertEquals(html_src, result.html_src)
+        self.assertEqual(spec, result.spec)
+        self.assertEqual(html_src, result.html_src)
         self.assertIsNotNone(result.root_element)
         self.assertTrue(result.passed)
         self.assertFalse(result.failed)
-        self.assertEquals(0, len(result.element_defs_not_found))
+        self.assertEqual(0, len(result.element_defs_not_found))
         self.assertIsNone(result.failed_on_def)
 
     def test_result_object_failed_with_element_def_not_matching_any_element(self):
@@ -141,15 +141,15 @@ class MatchingResultTests(BaseElementDefTests):
 
         result = html_match(spec, html_src)
 
-        self.assertEquals(spec, result.spec)
-        self.assertEquals(html_src, result.html_src)
+        self.assertEqual(spec, result.spec)
+        self.assertEqual(html_src, result.html_src)
         self.assertIsNotNone(result.root_element)
         self.assertFalse(result.passed)
         self.assertTrue(result.failed)
-        self.assertEquals(2, len(result.element_defs_not_found))
+        self.assertEqual(2, len(result.element_defs_not_found))
         self.assertIn(heading_not_found_def, result.element_defs_not_found)
         self.assertIn(text_not_found_def, result.element_defs_not_found)
-        self.assertEquals(heading_not_found_def, result.failed_on_def)
+        self.assertEqual(heading_not_found_def, result.failed_on_def)
 
     def test_result_object_failed_with_matcher_not_matched_because_html_out_of_order(self):
         html_src = """
@@ -167,13 +167,13 @@ class MatchingResultTests(BaseElementDefTests):
 
         result = html_match(spec, html_src)
 
-        self.assertEquals(spec, result.spec)
-        self.assertEquals(html_src, result.html_src)
+        self.assertEqual(spec, result.spec)
+        self.assertEqual(html_src, result.html_src)
         self.assertIsNotNone(result.root_element)
         self.assertFalse(result.passed)
         self.assertTrue(result.failed)
-        self.assertEquals(0, len(result.element_defs_not_found))
-        self.assertEquals(heading_not_found_def, result.failed_on_def)
+        self.assertEqual(0, len(result.element_defs_not_found))
+        self.assertEqual(heading_not_found_def, result.failed_on_def)
 
 
 class ElementDefHelperTests(BaseElementDefTests):

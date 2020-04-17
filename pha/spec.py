@@ -28,30 +28,26 @@ class ElementDef(object):
             child.parent = self
 
     def _handle_escaped_attrs(self):
-        attrs_to_replace = list()
+        new_attrs={}
         for key, value in self.attrs.items():
             if key.endswith('_'):
-                self.attrs[key.replace('_', '')] = value
-                attrs_to_replace.append(key)
-
-        for key in attrs_to_replace:
-            del self.attrs[key]
+                new_attrs[key.replace('_', '')] = value
+            else:
+                new_attrs[key] = value
+        self.attrs = new_attrs
 
     def __repr__(self):
         return u'ElementMatcher[name_regex={0},content={1},attrs={2}]'.format(self.name_regex, self.content, self.attrs)
 
     def __str__(self):
-        return unicode(self).encode('utf-8')
-
-    def __unicode__(self):
         name = self.name_regex[1:-1]
-        elem_def = u'<{0}'.format(name)
+        elem_def = '<{0}'.format(name)
         for key, value in self.attrs.items():
-            elem_def += u' {0}="{1}"'.format(key, value)
+            elem_def += ' {0}="{1}"'.format(key, value)
         if self.content:
-            elem_def += u'>{0}</{1}>'.format(self.content, name)
+            elem_def += '>{0}</{1}>'.format(self.content, name)
         else:
-            elem_def += u'/>'
+            elem_def += '/>'
 
         return elem_def
 
