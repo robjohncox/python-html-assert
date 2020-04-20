@@ -42,7 +42,7 @@ def _build_spec_html(spec):
     html_string = '<{0}{1}>'.format(element_name, attr_string)
 
     if spec.content:
-        html_string += spec.content
+        html_string += str(spec.content,"utf-8")
 
     for child in spec.children:
         html_string += _build_spec_html(child)
