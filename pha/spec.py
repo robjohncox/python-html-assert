@@ -54,7 +54,7 @@ class ElementDef(object):
 
 def elem(name, *children, **attrs):
     elem_regex = r'^{0}$'.format(name)
-    return str(ElementDef(elem_regex, None, *children, **attrs))
+    return ElementDef(elem_regex, None, *children, **attrs)
 
 
 def html(*children, **attrs):
