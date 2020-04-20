@@ -142,7 +142,7 @@ def _content_matches(element_def, element):
     if not element_def.content:
         return True
     for string in element.strings:
-        if string and element_def.content in string:
+        if string and str(element_def.content) in string:
             return True
     return False
 
