@@ -37,7 +37,7 @@ class ElementDef(object):
         self.attrs = new_attrs
 
     def __repr__(self):
-        return u'ElementMatcher[name_regex={0},content={1},attrs={2}]'.format(self.name_regex, self.content, self.attrs)
+        return 'ElementMatcher[name_regex={0},content={1},attrs={2}]'.format(self.name_regex, self.content, self.attrs)
 
     def __str__(self):
         name = self.name_regex[1:-1]
@@ -54,21 +54,21 @@ class ElementDef(object):
 
 def elem(name, *children, **attrs):
     elem_regex = r'^{0}$'.format(name)
-    return ElementDef(elem_regex, None, *children, **attrs)
+    return str(ElementDef(elem_regex, None, *children, **attrs))
 
 
 def html(*children, **attrs):
-    return ElementDef(r'^html$', None, *children, **attrs)
+    return str(ElementDef(r'^html$', None, *children, **attrs))
 
 
 def heading(heading_text, *children, **attrs):
     attrs['content'] = heading_text
-    return ElementDef(r'^(h1|h2|h3|h4|h5|h6)$', *children, **attrs)
+    return str(ElementDef(r'^(h1|h2|h3|h4|h5|h6)$', *children, **attrs))
 
 
 def text(text_content, *children, **attrs):
     attrs['content'] = text_content
-    return ElementDef(r'^.*$', *children, **attrs)
+    return str(ElementDef(r'^.*$', *children, **attrs))
 
 
 def a(href=None, link_text=None, *children, **attrs):
@@ -76,7 +76,7 @@ def a(href=None, link_text=None, *children, **attrs):
         attrs['href'] = href
     if link_text:
         attrs['content'] = link_text
-    return ElementDef(r'^a$', *children, **attrs)
+    return str(ElementDef(r'^a$', *children, **attrs))
 
 
 def accordion(*children, **attrs):
@@ -100,19 +100,19 @@ def acc_body(*children, **attrs):
 
 
 def div(*children, **attrs):
-    return ElementDef(r'^div$', *children, **attrs)
+    return str(ElementDef(r'^div$', *children, **attrs))
 
 
 def input(id, value=None, *children, **attrs):
     attrs['id'] = id
     if value:
         attrs['value'] = value
-    return ElementDef(r'^input$', *children, **attrs)
+    return str(ElementDef(r'^input$', *children, **attrs))
 
 
 def select(id, *children, **attrs):
     attrs['id'] = id
-    return ElementDef(r'^select$', *children, **attrs)
+    return str(ElementDef(r'^select$', *children, **attrs))
 
 
 def option(value, content=None, selected=False, *children, **attrs):
@@ -121,7 +121,7 @@ def option(value, content=None, selected=False, *children, **attrs):
         attrs['content'] = content
     if selected:
         attrs['selected'] = ''
-    return ElementDef(r'^option$', *children, **attrs)
+    return str(ElementDef(r'^option$', *children, **attrs))
 
 
 def option_xhtml(value, content=None, selected=False, *children, **attrs):
@@ -130,9 +130,9 @@ def option_xhtml(value, content=None, selected=False, *children, **attrs):
         attrs['content'] = content
     if selected:
         attrs['selected'] = 'selected'
-    return ElementDef(r'^option$', *children, **attrs)
+    return str(ElementDef(r'^option$', *children, **attrs))
 
 
 def img(src, *children, **attrs):
     attrs['src'] = src
-    return ElementDef(r'^img$', *children, **attrs)
+    return str(ElementDef(r'^img$', *children, **attrs))
