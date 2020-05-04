@@ -15,13 +15,13 @@ CLASSIFIERS = [
     'License :: OSI Approved :: MIT License',
     'Operating System :: MacOS :: MacOS X',
     'Operating System :: POSIX :: Linux',
-    'Programming Language :: Python :: 2.7',
+    'Programming Language :: Python :: 3.6',
     'Topic :: Software Development :: Testing',
     'Topic :: Utilities']
 
 setup(
     name='python-html-assert',
-    version='0.2.1',
+    version='0.2.1.1',
     packages=find_packages(),
     install_requires=REQUIREMENTS,
     author='Robert Cox',

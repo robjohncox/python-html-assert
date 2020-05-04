@@ -33,25 +33,21 @@ class MatcherResult(object):
         return 'MatcherResult[passed={0},elem_defs_not_found={1},failed_on_def={2}'.format(self.passed,
                                                                                            self.element_defs_not_found,
                                                                                            self.failed_on_def)
-
     def __str__(self):
-        return unicode(self).encode('utf-8')
-
-    def __unicode__(self):
-        result = u'HTML Matching: {0}\n\n'.format(self.result_text.upper())
+        result = 'HTML Matching: {0}\n\n'.format(self.result_text.upper())
 
         if self.failed:
             if self.failed_on_def:
-                result += u'Failed when attempting to match against {0}\n'.format(unicode(self.failed_on_def))
+                result += 'Failed when attempting to match against {0}\n'.format(self.failed_on_def)
             if self.element_defs_not_found:
-                result += u'Some element definitions were not found anywhere in the HTML:\n'
+                result += 'Some element definitions were not found anywhere in the HTML:\n'
                 for element_def in self.element_defs_not_found:
-                    result += u' - {0}\n'.format(unicode(element_def))
-            result += u'\n'
+                    result += ' - {0}\n'.format(element_def)
+            result += '\n'
 
-            result += u'Specification:\n{0}\n\n'.format(self.pretty_spec())
-            result += u'Pruned HTML Source:\n{0}\n\n'.format(self.root_element.prettify())
-            result += u'Full HTML Source:\n{0}\n\n'.format(self.pretty_html_src())
+            result += 'Specification:\n{0}\n\n'.format(self.pretty_spec())
+            result += 'Pruned HTML Source:\n{0}\n\n'.format(self.root_element.prettify())
+            result += 'Full HTML Source:\n{0}\n\n'.format(self.pretty_html_src())
 
         return result
 
@@ -146,7 +142,7 @@ def _content_matches(element_def, element):
     if not element_def.content:
         return True
     for string in element.strings:
-        if string and element_def.content in string:
+        if string and str(element_def.content) in string:
             return True
     return False
 
