@@ -3,7 +3,10 @@ python-html-assert
 
 Utility for asserting the structure and content of HTML in python.
 
-*Important Note:* This is very much in alpha, there will be bugs for now.
+*Important Notes:* 
+
+* Only works on Python 3
+* This is very much in alpha, there will be bugs for now.
 
 ### Installation
 
@@ -92,29 +95,3 @@ the requirements have been installed.
 ```bash
 py.test
 ```
-
-### Further Thoughts
-
-Some additional notes that may be of interest:
-
-- This works very well when running tests with Selenium, as you can take the
-  page source that gets loaded from the web driver.
-- This is not intended to solve the world's HTML assertion problems, it will
-  prove useful in some contexts, but in others this style of assertion will
-  prove to be too weak and you should therefore use a different tool.
-- As we develop the framework further and understand its strengths and
-  limitations, we will strive to make these very clear so people can make
-  conscious choices on whether this approach makes sense for them or not.
-
-### In the Pipeline
-
-The important enhancements we will focus on first are:
-
-- Better error reporting, this is the single major weakness of the current
-  implementation, debugging test failures can be a real pain.
-- Finish an improved matcher algorithm that deals better with repeated
-  elements.
-- Write assertion methods using this logic for simpler integration into test
-  cases.
-
-The `todo.txt` file contains a more detailed list of upcoming tasks.
