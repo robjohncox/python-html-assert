@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 
 REQUIREMENTS = [
-    'beautifulsoup4<=4.3.2']
+    'beautifulsoup4']
 
 
 PACKAGES = [

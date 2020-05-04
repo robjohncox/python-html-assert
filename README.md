@@ -61,9 +61,9 @@ def test_my_html(self):
         heading('My Document'),
         div(
             text('This is some text.'),
-            elem('table', id='important-table)))
-
-    self.assertTrue(html_match(spec, html_src))
+            elem('table', id='important-table')))
+    result = html_match(spec, html_src)
+    self.assertTrue(result.passed)
 ```
 
 Now, even if there are changes to the HTML that we don't care about, our test
